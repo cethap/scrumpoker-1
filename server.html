@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"  dir="ltr">
 <meta http-equiv="X-UA-Compatible" content="IE=9" />
-<head><title>SCADA Valve Control Example</title>
+<head><title>SCRUM poker server client</title>
     <meta name="viewport" content="initial-scale = 1.0,maximum-scale = 1.0" />
     <link type="text/css" rel="stylesheet" href="/app.css" media="all">
 </head>
 <script src="/socket.io/socket.io.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+<script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
 <script>
     var socket = io.connect('127.0.0.1:8013'); //set this to the ip address of your node.js server
 
     // on connection to server, ask for user's name with an anonymous callback
     socket.on('connect', function(){
-        // call the server-side function 'adduser' and send one parameter (value of prompt)
-        socket.emit('adduser', prompt("What's your name?"));
+        // call the server-side function 'requestuserlist'
+        socket.emit('requestuserlist');
     });
 
     // listener, whenever the server emits 'updatechat', this updates the chat body
@@ -31,6 +31,18 @@
 
     // on load of page
     $(function(){
+        $('.reset').click(function(e) {
+            e.preventDefault();
+            // tell server to execute 'resetchoices'
+            socket.emit('reset');
+        });
+
+        $('.release').click(function(e) {
+            e.preventDefault();
+            // tell server to execute 'resetchoices'
+            socket.emit('release');
+        });
+
         // when the client clicks SEND
         $('#datasend').click( function() {
             var message = $('#data').val();
@@ -47,24 +59,16 @@
             }
         });
 
-        // when the client clicks OPEN
-        $('.open').click( function() {
-            var id = $(this).parent().attr("id");;
-            //console.log(id);
-            socket.emit('opencmd', id);
-        });
-
-        // when the client clicks CLOSE
-        $('.close').click( function() {
-            var id = $(this).parent().attr("id");;
-            //console.log(id);
-            socket.emit('closecmd', id);
-        });
-
     });
 
 </script>
 <body>
+
+<ul>
+    <li><a href="#" class="reset">Reset values</a></li>
+    <li><a href="#" class="release">Release values</a></li>
+</ul>
+
 <div id="userlist">
     <b>USERS</b>
     <div id="users"></div>

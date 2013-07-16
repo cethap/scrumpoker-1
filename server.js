@@ -20,7 +20,9 @@ app.get('/app.css', function (req, res) {
 
 // usernames which are currently connected to the chat
 var usernames = {};
-var poker = {};
+
+// pokerchoices
+var pokervalues = {};
 
 io.sockets.on('connection', function (socket) {
 
@@ -54,18 +56,24 @@ io.sockets.on('connection', function (socket) {
         socket.pokervalue = pokervalue;
 
         // add the client's value to the global list
-        //usernames[username] = username;
-        poker[socket.username] = pokervalue;
+        pokervalues[socket.username] = pokervalue;
 
         // echo to client they've made a choice
         socket.emit('updatechat', 'SERVER', 'you have made the following choice ' + pokervalue);
+
+        //io.sockets.emit('updateusers', usernames);
+    });
+
+    // when the "server" client emits 'requestuserlist' send the userlist back
+    socket.on('requestuserlist', function () {
+        // send the updateusers commando to the server client
+        socket.emit('updateusers', usernames);
     });
 
     // when the "server" client emits 'reset', reset all poker choices to ZERO
-    socket.on('reset', function (pokervalue) {
-
-        var poker = {};
-        io.sockets.emit('resetchoices', usernames);
+    socket.on('reset', function () {
+        var pokervalues = {};
+        io.sockets.emit('resetchoices');
 
         // echo to client they've made a choice
         socket.broadcast.emit('updatechat', 'SERVER', 'Poker choices reset for a new poker');
@@ -73,14 +81,16 @@ io.sockets.on('connection', function (socket) {
 
     // when the user disconnects.. perform this
     socket.on('disconnect', function(){
-        // remove the username from global usernames list
-        delete usernames[socket.username];
+        if(socket.username) {
+            // remove the username from global usernames list
+            delete usernames[socket.username];
 
-        // update list of users in chat, client-side
-        io.sockets.emit('updateusers', usernames);
+            // update list of users in chat, client-side
+            io.sockets.emit('updateusers', usernames);
 
-        // echo globally that this client has left
-        socket.broadcast.emit('updatechat', 'SERVER', socket.username + ' has disconnected');
+            // echo globally that this client has left
+            socket.broadcast.emit('updatechat', 'SERVER', socket.username + ' has disconnected');
+        }
     });
 
 });

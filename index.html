@@ -30,12 +30,8 @@
     });
 
     // listener, whenever the server emits 'resetchoices', this resets the current users choice
-    socket.on('resetchoices', function(data) {
-        //$('#users').empty();
-        $.each(data, function(key, value) {
-            $('#users').append('<div>' + key + '</div>');
-        });
-        $('input:radio[name=poker]:checked').val();
+    socket.on('resetchoices', function() {
+        $('input:radio[name=poker]:checked').prop('checked', false);
     });
 
     // on load of page
@@ -57,7 +53,7 @@
         });
 
         $('[name=poker]').click( function() {
-            var value = $('input:radio[name=poker]:checked').prop('checked', false);
+            var value = $('input:radio[name=poker]:checked').val();
 
             //console.log(id);
             socket.emit('poker', value);
