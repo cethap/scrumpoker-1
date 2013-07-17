@@ -22,10 +22,10 @@
     });
 
     // listener, whenever the server emits 'updateusers', this updates the username list
-    socket.on('updateusers', function(data) {
+    socket.on('updateuserspoker', function(data) {
         $('#users').empty();
         $.each(data, function(key, value) {
-            $('#users').append('<div>' + key + '</div>');
+            $('#users').append('<div>' + key + '(' + value + ')</div>');
         });
     });
 

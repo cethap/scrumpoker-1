@@ -48,6 +48,8 @@ io.sockets.on('connection', function (socket) {
 
         // update the list of users in chat, client-side
         io.sockets.emit('updateusers', usernames);
+
+        io.sockets.emit('updateuserspoker', pokervalues);
     });
 
     // when the client emits 'poker', this listens and executes
@@ -61,6 +63,8 @@ io.sockets.on('connection', function (socket) {
         // echo to client they've made a choice
         socket.emit('updatechat', 'SERVER', 'you have made the following choice ' + pokervalue);
 
+        io.sockets.emit('updateuserspoker', pokervalues);
+
         //io.sockets.emit('updateusers', usernames);
     });
 
@@ -72,11 +76,14 @@ io.sockets.on('connection', function (socket) {
 
     // when the "server" client emits 'reset', reset all poker choices to ZERO
     socket.on('reset', function () {
+        //todo: only empty the values chose by the users in pokervalues
         var pokervalues = {};
         io.sockets.emit('resetchoices');
 
         // echo to client they've made a choice
         socket.broadcast.emit('updatechat', 'SERVER', 'Poker choices reset for a new poker');
+
+        io.sockets.emit('updateuserspoker', pokervalues);
     });
 
     // when the user disconnects.. perform this
