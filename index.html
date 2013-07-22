@@ -34,6 +34,24 @@
         });
     });
 
+    // listener, whenever the server emits 'updateusers', this updates the username list
+    socket.on('releasechoices', function(data) {
+        var msg = '<strong>Choices are made: </strong> ';
+
+        for (var prop in data) {
+            if(data.hasOwnProperty(prop)){
+                msg += prop;
+                if (data[prop].length > 0) {
+                    msg += '(' + data[prop] + ') ';
+                } else {
+                    msg += '(0) ';
+                }
+            }
+        }
+        msg += '<br>';
+        $('.conversation').append(msg);
+    });
+
     // listener, whenever the server emits 'resetchoices', this resets the current users choice
     socket.on('resetchoices', function() {
         $('input:radio[name=poker]:checked').prop('checked', false);
