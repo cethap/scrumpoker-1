@@ -1,9 +1,14 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"  dir="ltr">
-<meta http-equiv="X-UA-Compatible" content="IE=9" />
-<head><title>SCRUM poker server client</title>
-    <meta name="viewport" content="initial-scale = 1.0,maximum-scale = 1.0" />
-    <link type="text/css" rel="stylesheet" href="/app.css" media="all">
+<!--[if lte IE 7 ]><html lang="en" class="no-js ie ie7 ie-lte7 ie-lte9"><![endif]-->
+<!--[if IE 8 ]><html lang="en" class="no-js ie ie8 ie-lte9"><![endif]-->
+<!--[if IE 9 ]><html lang="en" class="no-js ie9 ie-lte9"><![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--><html lang="en" class="no-js"><!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Poker game server client</title>
+    <link rel="stylesheet" href="/app.css">
 </head>
 <script src="/socket.io/socket.io.js"></script>
 <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
@@ -18,14 +23,19 @@
 
     // listener, whenever the server emits 'updatechat', this updates the chat body
     socket.on('updatechat', function (username, data) {
-        $('#conversation').append('<b>'+username + ':</b> ' + data + '<br>');
+        $('.conversation').append('<strong>'+username + ':</strong> ' + data + '<br>');
     });
 
     // listener, whenever the server emits 'updateusers', this updates the username list
-    socket.on('updateuserspoker', function(data) {
-        $('#users').empty();
+    socket.on('updateusers', function(data) {
+        $('.users').empty();
+        var msg = undefined;
+
         $.each(data, function(key, value) {
-            $('#users').append('<div>' + key + '(' + value + ')</div>');
+            msg = '<li>' + key;
+            if (value.length > 0) { msg += '(' + value + ')'; }
+            msg += '</li>';
+            $('.users').append(msg);
         });
     });
 
@@ -60,7 +70,6 @@
         });
 
     });
-
 </script>
 <body>
 
@@ -69,14 +78,14 @@
     <li><a href="#" class="release">Release values</a></li>
 </ul>
 
-<div id="userlist">
-    <b>USERS</b>
-    <div id="users"></div>
+<div class="userlist">
+    <strong>Users</strong>
+    <ul class="users"></ul>
 </div>
-<div id="messages">
+<div class="messages">
     <input id="data"/>
     <input type="button" id="datasend" class="send" value="send" />
-    <div id="conversation"></div>
+    <div class="conversation"></div>
 </div>
 </body>
 </html>

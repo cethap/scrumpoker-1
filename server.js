@@ -21,9 +21,6 @@ app.get('/app.css', function (req, res) {
 // usernames which are currently connected to the chat
 var usernames = {};
 
-// pokerchoices
-var pokervalues = {};
-
 io.sockets.on('connection', function (socket) {
 
     // when the client emits 'sendchat', this listens and executes
@@ -38,7 +35,7 @@ io.sockets.on('connection', function (socket) {
         socket.username = username;
 
         // add the client's username to the global list
-        usernames[username] = username;
+        usernames[username] = '';
 
         // echo to client they've connected
         socket.emit('updatechat', 'SERVER', 'you have connected');
@@ -48,8 +45,6 @@ io.sockets.on('connection', function (socket) {
 
         // update the list of users in chat, client-side
         io.sockets.emit('updateusers', usernames);
-
-        io.sockets.emit('updateuserspoker', pokervalues);
     });
 
     // when the client emits 'poker', this listens and executes
@@ -58,14 +53,13 @@ io.sockets.on('connection', function (socket) {
         socket.pokervalue = pokervalue;
 
         // add the client's value to the global list
-        pokervalues[socket.username] = pokervalue;
+        usernames[socket.username] = pokervalue;
 
         // echo to client they've made a choice
-        socket.emit('updatechat', 'SERVER', 'you have made the following choice ' + pokervalue);
+        socket.emit('updatechat', 'SERVER', 'you have made the following choice: ' + pokervalue);
 
-        io.sockets.emit('updateuserspoker', pokervalues);
-
-        //io.sockets.emit('updateusers', usernames);
+        // update userlist, this giver the server client the poker value in advance
+        io.sockets.emit('updateusers', usernames);
     });
 
     // when the "server" client emits 'requestuserlist' send the userlist back
@@ -74,16 +68,40 @@ io.sockets.on('connection', function (socket) {
         socket.emit('updateusers', usernames);
     });
 
-    // when the "server" client emits 'reset', reset all poker choices to ZERO
+    // when the "server" client emits 'reset', reset all poker choices to empty
     socket.on('reset', function () {
-        //todo: only empty the values chose by the users in pokervalues
-        var pokervalues = {};
+        //Just empty the pokervalues, not the key usernames
+        for (var prop in usernames) {
+            if(usernames.hasOwnProperty(prop)){
+                usernames[prop] = '';
+            }
+        }
+
+        //Emit the reset choices command to all users
         io.sockets.emit('resetchoices');
 
-        // echo to client they've made a choice
+        // Let the users know the has been made a reset
         socket.broadcast.emit('updatechat', 'SERVER', 'Poker choices reset for a new poker');
 
-        io.sockets.emit('updateuserspoker', pokervalues);
+        io.sockets.emit('updateusers', usernames);
+    });
+
+    // when the "server" client emits 'releaase', Update the log with chosen poker values
+    socket.on('reset', function () {
+        //Just empty the pokervalues, not the key usernames
+        for (var prop in usernames) {
+            if(usernames.hasOwnProperty(prop)){
+                usernames[prop] = '';
+            }
+        }
+
+        //Emit the reset choices command to all users
+        io.sockets.emit('resetchoices');
+
+        // Let the users know the has been made a reset
+        socket.broadcast.emit('updatechat', 'SERVER', 'Poker choices reset for a new poker');
+
+        io.sockets.emit('updateusers', usernames);
     });
 
     // when the user disconnects.. perform this
