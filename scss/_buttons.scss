@@ -1,0 +1,43 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,800);
+body {
+  font-size: 2em;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.poker ul {
+  max-width: 12em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.poker li {
+  margin: .5em;
+  float: left;
+}
+.poker input {
+  opacity: 0;
+  display: none;
+}
+.poker input:checked + label {
+  margin: .2em 0 0;
+  box-shadow: 0 0 #be0527, 0 0.1em 0.1em rgba(0, 0, 0, 0.2);
+}
+.poker label {
+  width: 2em;
+  height: 2em;
+  margin: 0 0 .2em;
+  display: block;
+  line-height: 2em;
+  text-align: center;
+  background: #e42f40;
+  box-shadow: 0 0.3em #be0527, 0 0.2em 0.2em rgba(0, 0, 0, 0.5);
+  border-width: 0 0 .2em;
+  border-radius: 15%;
+  color: #fff;
+  transition: all .05s ease-in-out;
+  -webkit-transition: all .05s ease-in-out;
+}
+
+.userlist {
+  clear: left;
+}
