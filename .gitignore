@@ -4,7 +4,6 @@ export/*
 .sass-cache/
 css
 *.css
-*.map
 .grunt
 *.zip
 build
